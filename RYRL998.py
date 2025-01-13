@@ -103,7 +103,7 @@ class RYLR998:
 
                         log[str(current_time)] = data
 
-                        if data.startswith("+RCV="):
+                        if data.startswith("+RCV=") and self.debug:
                             parts = data.split(',')
                             node_id, msg_len, message, rssi, snr = parts[0], parts[1], parts[2], parts[3], parts[4]
                             print(f"[{current_time}] Node ID: {node_id}, Message: {message}, RSSI: {rssi}, SNR: {snr}")
