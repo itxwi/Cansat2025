@@ -86,12 +86,12 @@ class RYLR998:
     
     def receive(self):
         
-        global data
+        global log
         try:
-            with open('data.json', "r") as file:
-                data = json.load(file)
+            with open('log.json', "r") as file:
+                log = json.load(file)
         except:
-            data = {}
+            log = {}
 
         try:
             while True:
@@ -101,15 +101,15 @@ class RYLR998:
                         current_time = time.time() # UNIX Timestamp
                         #print(f"[{current_time}] Received data: {data}")
 
-                        data[str(current_time)] = data
+                        log[str(current_time)] = data
 
                         if data.startswith("+RCV="):
                             parts = data.split(',')
                             node_id, msg_len, message, rssi, snr = parts[0], parts[1], parts[2], parts[3], parts[4]
                             print(f"[{current_time}] Node ID: {node_id}, Message: {message}, RSSI: {rssi}, SNR: {snr}")
                         
-                        with open('data.json', "w") as file:
-                            json.dump(data, file, indent=4)
+                        with open('log.json', "w") as file:
+                            json.dump(log, file, indent=4)
 
                                 
                 time.sleep(0.1)
