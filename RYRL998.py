@@ -88,7 +88,7 @@ class RYLR998:
         
         global data
         try:
-            with open('memory.json', "r") as file:
+            with open('data.json', "r") as file:
                 data = json.load(file)
         except:
             data = {}
@@ -108,7 +108,7 @@ class RYLR998:
                             node_id, msg_len, message, rssi, snr = parts[0], parts[1], parts[2], parts[3], parts[4]
                             print(f"[{current_time}] Node ID: {node_id}, Message: {message}, RSSI: {rssi}, SNR: {snr}")
                         
-                        with open('memory.json', "w") as file:
+                        with open('data.json', "w") as file:
                             json.dump(data, file, indent=4)
 
                                 
