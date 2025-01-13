@@ -85,18 +85,32 @@ class RYLR998:
 
     
     def receive(self):
+        
+        global data
+        try:
+            with open('memory.json', "r") as file:
+                data = json.load(file)
+        except:
+            data = {}
+
         try:
             while True:
                 if self.ser.in_waiting > 0:
                     data = self.ser.readline().decode('utf-8').strip()
                     if data:
                         current_time = time.time() # UNIX Timestamp
-                        print(f"[{current_time}] Received data: {data}")
-                        
+                        #print(f"[{current_time}] Received data: {data}")
+
+                        data[str(current_time)] = data
+
                         if data.startswith("+RCV="):
                             parts = data.split(',')
                             node_id, msg_len, message, rssi, snr = parts[0], parts[1], parts[2], parts[3], parts[4]
                             print(f"[{current_time}] Node ID: {node_id}, Message: {message}, RSSI: {rssi}, SNR: {snr}")
+                        
+                        with open('memory.json', "w") as file:
+                            json.dump(data, file, indent=4)
+
                                 
                 time.sleep(0.1)
 
@@ -108,3 +122,9 @@ class RYLR998:
             print("Serial monitoring stopped.")
 
 myRadio = RYLR998(debug=True)
+myRadio.send_serial('AT+NETWORKID=1')
+myRadio.send_serial('AT+ADDRESS=102')
+
+while True:
+    newMessage = input()
+    myRadio.transmit(101, newMessage)
