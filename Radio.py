@@ -2,7 +2,7 @@ import serial
 import time
 import json
 
-class RYLR998:
+class Radio:
     # Network ID (Global group, a bandwidth multiple Addresses can communicate with)
     # Address (Local group, unique to each RYRL device in a Network ID) [0~2^16]
     # Cansat will utilize Point to Point communications
@@ -121,10 +121,5 @@ class RYLR998:
         finally:
             print("Serial monitoring stopped.")
 
-myRadio = RYLR998(debug=True)
-myRadio.send_serial('AT+NETWORKID=1')
-myRadio.send_serial('AT+ADDRESS=102')
-
-while True:
-    newMessage = input()
-    myRadio.transmit(101, newMessage)
+def createRadio():
+    return Radio()
