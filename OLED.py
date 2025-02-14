@@ -11,7 +11,7 @@ class OLED:
         self.height = self.disp.height
 
         self.image = Image.new('1',(self.width,self.height)) #1 means binary colorscheme
-        self.draw = ImageDraw.Draw(Image)
+        self.draw = ImageDraw.Draw(self.image)
 
         self.font = ImageFont.load_default()
 
@@ -19,12 +19,13 @@ class OLED:
         self.disp.clear()
         self.disp.display()
 
-    def drawImage(self):
+    def display(self):
+        self.disp.image(self.image)
         self.disp.display()
 
-    def drawPoint(self,pos,bit):
+    def drawPoint(self,pos,bit=1):
         #bit is 1 or 0
-        self.draw.point(pos,bit)
+        self.draw.point(pos,fill=bit)
 
     def drawFont(self,word,pos):
         self.draw.text(pos,word,font = self.font,fill=255)
