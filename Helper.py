@@ -26,7 +26,7 @@ def getLog():
         log = {
 
         }
-        with open('state.json', 'w') as file:
+        with open('log.json', 'w') as file:
             json.dump(log, file, indent=4)
     
     return log
