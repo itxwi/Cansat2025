@@ -1,35 +1,61 @@
-import smbus2
+import mpu6050
 import time
 
-class Gyro:
-    def __init__(self, ADDR=0x68):
-        # initiate
-        self.ADDR = ADDR
-        self.bus = smbus2.SMBus(1)
-        self.bus.write_byte_data(self.ADDR, 0x6B, 0)  # Wake up the MPU-6050
+mpu6050 = mpu6050.mpu6050(0x68) # Address for MPU6050 is usually 0x68
 
-    def read_raw_data(self, reg):
+gyrooffset = {'x': 0, 'y': 0, 'z': 0}
+acceloffset = {'x': 0, 'y': 0, 'z': 0}
 
-        high = self.bus.read_byte_data(self.ADDR, reg)
-        low = self.bus.read_byte_data(self.ADDR, reg + 1)
-        value = (high << 8) | low
-        if value > 32768:
-            value = value - 65536
-        return value
+def readSensor(place=2,calibrating = False):
+    # round = decimal place
+    accelerometer_data = mpu6050.get_accel_data()
+    gyroscope_data = mpu6050.get_gyro_data()
+    temperature = mpu6050.get_temp()
 
-    def get_gyro_data(self):
-        # Read gyroscope data
-        gyro_x = self.read_raw_data(0x43)
-        gyro_y = self.read_raw_data(0x45)
-        gyro_z = self.read_raw_data(0x47)
-        return {'x': gyro_x, 'y': gyro_y, 'z': gyro_z}
+    # Apply offsets, when calibrating ensure the object is not in motion
+    if not calibrating:
+        for dim in gyroscope_data:
+            gyroscope_data[dim] -= gyrooffset[dim]
 
-    def get_accel_data(self):
-        # Read accelerometer data
-        accel_x = self.read_raw_data(0x3B)
-        accel_y = self.read_raw_data(0x3D)
-        accel_z = self.read_raw_data(0x3F)
-        return {'x': accel_x, 'y': accel_y, 'z': accel_z}
+        for dim in acceloffset:
+            accelerometer_data[dim] -=acceloffset[dim]
 
-def createGyro():
-    return Gyro()
+    if place is None:
+        return {"accel": accelerometer_data,
+                "gyro": gyroscope_data,
+                "temp": temperature}
+    else:
+        return {"accel": {dim: round(accelerometer_data[dim], place) for dim in accelerometer_data},
+                "gyro": {dim: round(gyroscope_data[dim], place) for dim in gyroscope_data},
+                "temp": round(temperature, place)}
+
+def calibrateGyro(rounds=100,delay = .01):
+    global gyrooffset
+    for _ in range(rounds):
+        time.sleep(delay)
+        data = readSensor(None,calibrating=True)
+        for dim in data['gyro']:
+            gyrooffset[dim] += data['gyro'][dim]
+    gyrooffset = {key: gyrooffset[key] / rounds for key in gyrooffset}
+
+    print('done gyroscope calibration')
+    return gyrooffset
+
+def calibrateAccel(rounds=100, delay =.01):
+    global acceloffset
+    for _ in range(rounds):
+        time.sleep(delay)
+        data = readSensor(None,calibrating=True)
+        for dim in data['accel']:
+            acceloffset[dim] += data['accel'][dim]
+    acceloffset = {key: acceloffset[key] / rounds for key in acceloffset}
+
+    print('done accelerometer calibration')
+    return acceloffset
+
+calibrateAccel()
+calibrateGyro()
+
+while True:
+    time.sleep(1)
+    print(readSensor())
