@@ -1,5 +1,8 @@
 # First controller program will display the gyroscope information onto the screen, then sensor information. It will contain the previous values in log.json
 
+import sys,os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import Gyro,Screen,Radio,Sensor#,Camera
 import Helper
 import time
