@@ -35,4 +35,4 @@ def createImage(brightness=0, contrast = 1, greyscale = False, resolution = (128
         with open(f'{os.getcwd()}/images/array.json', 'w') as json_file:
             json.dump(image_array.tolist(), json_file)
 
-createImage(array=True,resolution=(25,25),greyscale=True)
+#createImage(array=True,resolution=(25,25),greyscale=True)
