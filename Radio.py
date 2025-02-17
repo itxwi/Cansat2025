@@ -120,6 +120,3 @@ class Radio:
             print(f"Serial Error: {e}")
         finally:
             print("Serial monitoring stopped.")
-
-def createRadio():
-    return Radio()
