@@ -31,4 +31,5 @@ class Gyro:
         accel_z = self.read_raw_data(0x3F)
         return {'x': accel_x, 'y': accel_y, 'z': accel_z}
 
-
+def createGyro():
+    return Gyro()

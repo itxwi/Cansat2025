@@ -29,3 +29,6 @@ class OLED:
 
     def drawFont(self,word,pos):
         self.draw.text(pos,word,font = self.font,fill=255)
+
+def createOLED():
+    return OLED()
