@@ -16,16 +16,19 @@ class OLED:
         self.font = ImageFont.load_default()
 
     def clearImage(self):
+        """clears image and then displays it"""
         self.disp.clear()
         self.disp.display()
 
     def display(self):
+        """displays current image"""
         self.disp.image(self.image)
         self.disp.display()
 
     def drawPoint(self,pos,bit=1):
-        #bit is 1 or 0
+        """draws to image, no displaying, bit is 1 or 0"""
         self.draw.point(pos,fill=bit)
 
     def drawFont(self,word,pos):
+        """draws text to image"""
         self.draw.text(pos,word,font = self.font,fill=255)

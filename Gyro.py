@@ -7,6 +7,12 @@ gyrooffset = {'x': 0, 'y': 0, 'z': 0}
 acceloffset = {'x': 0, 'y': 0, 'z': 0}
 
 def getData(place=2,calibrating = False):
+    """
+
+    "accel": accelerometer_data,
+    "gyro": gyroscope_data
+
+    """
     # round = decimal place
     accelerometer_data = mpu6050.get_accel_data()
     gyroscope_data = mpu6050.get_gyro_data()
