@@ -3,11 +3,12 @@ import time
 import json
 
 class Radio:
-    # Network ID (Global group, a bandwidth multiple Addresses can communicate with)
-    # Address (Local group, unique to each RYRL device in a Network ID) [0~2^16]
-    # Cansat will utilize Point to Point communications
-    # Serial buffers utilize bits instead of strings, use b'' strings or encode/decode with UTF-8
-
+    """
+    Network ID (Global group, a bandwidth multiple Addresses can communicate with)
+    Address (Local group, unique to each RYRL device in a Network ID) [0~2^16]
+    Cansat will utilize Point to Point communications
+    Serial buffers utilize bits instead of strings, use b'' strings or encode/decode with UTF-8
+    """
 
     def __init__(self,debug=False,BAUDRATE=115200,readTime = .25):
         self.ser = serial.Serial('/dev/serial0', baudrate=BAUDRATE, timeout=1,)
@@ -108,7 +109,7 @@ class Radio:
                             node_id, msg_len, message, rssi, snr = parts[0], parts[1], parts[2], parts[3], parts[4]
                             print(f"[{current_time}] Node ID: {node_id}, Message: {message}, RSSI: {rssi}, SNR: {snr}")
                         
-                        with open('log.json', "w") as file:
+                        with open('radioLog.json', "w") as file:
                             json.dump(log, file, indent=4)
 
                                 

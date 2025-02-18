@@ -38,6 +38,16 @@ Temp, altitude, pressure
 Contains helper functions <br />
 Mostly involving data management
 
+## Boot.py
+Will run the selected coordinator on boot
+
+
+# Coordinators
+The main controller program that links the modules together
+
+## King William
+First controller used for debugging. Will calibrate and display on screen sensor and gyro information.
+
 # Data organization
-state.json - config files as to which coordinator program to run, will contain orientation and velocity in future <br />
-log.json - dictionary, UTC time stamp followed by gyro data and sensor data
+state.json - config files as to which coordinator program to run, will contain orientation and velocity in future. Holds current data <br />
+log.json - dictionary, UTC time stamp followed by gyro data and sensor data, holds old data
