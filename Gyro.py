@@ -38,7 +38,8 @@ def getData(place=2,calibrating = False):
 def calibrateGyro(rounds=100,delay = .01):
     global gyrooffset
     for _ in range(rounds):
-        time.sleep(delay)
+        if delay>0:
+            time.sleep(delay)
         data = getData(None,calibrating=True)
         for dim in data['gyro']:
             gyrooffset[dim] += data['gyro'][dim]
@@ -50,7 +51,8 @@ def calibrateGyro(rounds=100,delay = .01):
 def calibrateAccel(rounds=100, delay =.01):
     global acceloffset
     for _ in range(rounds):
-        time.sleep(delay)
+        if delay>0:
+            time.sleep(delay)
         data = getData(None,calibrating=True)
         for dim in data['accel']:
             acceloffset[dim] += data['accel'][dim]

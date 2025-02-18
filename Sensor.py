@@ -10,7 +10,7 @@ bme680.sea_level_pressure = 1013.25
 def setPressure(pressure = 1013.25):
     bme680.sea_level_pressure = pressure
 
-def getData(temp_offset = -5):
+def getData(temp_offset = -5, place=2):
 
     """
     {
@@ -20,7 +20,18 @@ def getData(temp_offset = -5):
         "gas": bme680.gas,
         "humidity":bme680.relative_humidity}
     """
-    return {
+
+    if place:
+
+        return {
+            "temp": round(bme680.temperature + temp_offset,place),
+            "pressure": round(bme680.pressure,place),
+            "altitude":round(bme680.altitude,place),
+            "gas": round(bme680.gas,place),
+            "humidity":round(bme680.relative_humidity,place)
+        }
+    else:
+        return {
         "temp": bme680.temperature + temp_offset,
         "pressure": bme680.pressure,
         "altitude":bme680.altitude,

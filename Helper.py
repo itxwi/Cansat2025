@@ -8,6 +8,7 @@ def getState():
     except FileNotFoundError:
         # Default coordinator is king_william
         state = {
+            'cwd': os.getcwd(), #fix this later
             'coordinator': f'{os.getcwd()}/coordinators/king_william.py',
             'velocity': [0,0,0],
             'orientation':[0,0,0]
@@ -32,7 +33,7 @@ def getLog():
     return log
 
 def writeLog(newLog): #not recommended
-    with open('log.json') as file:
-        json.dump(newLog,file,ident=4)
+    with open('log.json','w') as file:
+        json.dump(newLog,file,indent=4)
     
     return newLog

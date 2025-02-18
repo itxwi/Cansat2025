@@ -12,12 +12,21 @@ Gyro.calibrateGyro()
 cansatOLED = Screen.OLED()
 
 while True:
-    time.sleep(.1)
+    time.sleep(1)
     currentLog = Helper.getLog()
-    currentInfo = Gyro.getData()
+    gyroInfo = Gyro.getData()
+    sensorInfo = Sensor.getData()
 
-    currentLog[time.time()] = currentInfo
+    newInfo = {
+        'accel' : gyroInfo['accel'],
+        'gyro' : gyroInfo['gyro'],
+        'sensor' : sensorInfo
+        }
+
+    currentLog[time.time()] = newInfo
     
     cansatOLED.drawFont("hello world",(0,0))
+    cansatOLED.display()
 
+    print(newInfo)
     Helper.writeLog(currentLog)
