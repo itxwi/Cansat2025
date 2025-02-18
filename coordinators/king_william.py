@@ -7,12 +7,13 @@ import Gyro,Screen,Radio,Sensor#,Camera
 import Helper
 import time
 
-Gyro.calibrateAccel()
-Gyro.calibrateGyro()
-cansatOLED = Screen.OLED()
+Gyro.calibrateAccel(delay=0)
+Gyro.calibrateGyro(delay=0)
+cansatOLED = Screen.OLED(fontsize=7)
 
 while True:
-    time.sleep(1)
+    time.sleep(.5)
+    cansatOLED.clearImage()
     currentLog = Helper.getLog()
     gyroInfo = Gyro.getData()
     sensorInfo = Sensor.getData()
@@ -22,10 +23,12 @@ while True:
         'gyro' : gyroInfo['gyro'],
         'sensor' : sensorInfo
         }
+    
+
 
     currentLog[time.time()] = newInfo
     
-    cansatOLED.drawFont("hello world",(0,0))
+    cansatOLED.drawFont(f"{gyroInfo['accel']}",(0,0))
     cansatOLED.display()
 
     print(newInfo)
