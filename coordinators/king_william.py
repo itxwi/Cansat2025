@@ -55,7 +55,7 @@ while True:
             cansatOLED.drawFont(f"{dim}: {gyroInfo['gyro'][dim]}",(74,(i+1)*16))
     else:
         cansatOLED.drawFont('Sensor',(10,0))
-        for reading in sensorInfo:
+        for i,reading in enumerate(sensorInfo):
             cansatOLED.drawFont(f"{reading}: {sensorInfo[reading]}",(10,(i+1)*16))
 
     cansatOLED.display()
