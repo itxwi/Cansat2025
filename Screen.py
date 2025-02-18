@@ -17,6 +17,7 @@ class OLED:
 
     def clearImage(self):
         """clears image and then displays it"""
+        self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
         self.disp.clear()
         self.disp.display()
 
