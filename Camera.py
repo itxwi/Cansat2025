@@ -1,5 +1,4 @@
 from picamzero import Camera
-import cv2
 import numpy as np
 import json
 import os
