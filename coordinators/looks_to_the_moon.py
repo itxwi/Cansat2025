@@ -1,0 +1,3 @@
+import Camera
+
+Camera.createImage()

@@ -6,17 +6,18 @@ import Helper
 import time
 
 dims = ['x','y','z']
+stuff_i_want = ['temp','pressure','altitude']
 
 cansatOLED = Screen.OLED(fontsize=16)
 cansatOLED.clearImage()
 cansatOLED.drawFont("calibrating accelerometer",(10,0))
 cansatOLED.display()
-Gyro.calibrateAccel(delay=0)
+Gyro.calibrateAccel(rounds=250)
 
 cansatOLED.clearImage()
 cansatOLED.drawFont("calibrating gyroscope",(10,0))
 cansatOLED.display()
-Gyro.calibrateGyro(delay=0)
+Gyro.calibrateGyro(rounds=250)
 
 cansatOLED.clearImage()
 
@@ -40,8 +41,10 @@ while True:
 
     currentLog[time.time()] = newInfo
 
-    if periods>=7/hertz:
-        periods=periods%7/hertz
+    print(periods)
+    periods=periods%(7/hertz)
+    if periods == 0:
+        print('swap')
         gyroState = not gyroState
 
     #display stuff
@@ -55,11 +58,11 @@ while True:
             cansatOLED.drawFont(f"{dim}: {gyroInfo['gyro'][dim]}",(74,(i+1)*16))
     else:
         cansatOLED.drawFont('Sensor',(10,0))
-        for i,reading in enumerate(sensorInfo):
-            cansatOLED.drawFont(f"{reading}: {sensorInfo[reading]}",(10,(i+1)*16))
-
+        for i,thign in enumerate(stuff_i_want):
+            cansatOLED.drawFont(f"{thign}: {sensorInfo[thign]}",(10,(i+1)*16))
+    
     cansatOLED.display()
 
-    print(newInfo)
+    #print(newInfo)
     periods+=1
     Helper.writeLog(currentLog)
