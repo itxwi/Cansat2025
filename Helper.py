@@ -7,9 +7,10 @@ def getState():
             state = json.load(file)
     except FileNotFoundError:
         # Default coordinator is king_william
+        print("state.json does not exist, defaulting coordinator to sliver of straw")
         state = {
             'cwd': os.path.abspath(os.path.join(os.path.dirname(__file__))), #fixed :)
-            'coordinator': f'{os.path.abspath(os.path.join(os.path.dirname(__file__)))}/coordinators/king_william.py',
+            'coordinator': f'{os.path.abspath(os.path.join(os.path.dirname(__file__)))}/coordinators/sliver_of_straw.py',
             'velocity': {'x':0,'y':0,'z':0},
             'orientation':{'x':0,'y':0,'z':0}
         }
@@ -35,8 +36,7 @@ def getLog():
 def writeLog(newLog): #not recommended
     with open('log.json','w') as file:
         json.dump(newLog,file,indent=4)
-    
-    return newLog
 
+    return newLog
 
 getState()
