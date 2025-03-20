@@ -1,6 +1,6 @@
 import time,os,subprocess
 
-# CONFIGS
+# configs
 COORDINATOR = "five_pebbles"
 WAIT = 5
 
