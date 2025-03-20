@@ -2,7 +2,7 @@ import time,os,subprocess
 
 # configs
 COORDINATOR = "five_pebbles"
-WAIT = 5
+WAIT = 1
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COORDINATOR_PATH = os.path.join(BASE_DIR,"coordinators",f"{COORDINATOR}.py")

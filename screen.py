@@ -18,6 +18,9 @@ class OLED:
     def clear_image(self):
         """clears image"""
         self.disp.clear()
+        self.image = Image.new('1', (self.width, self.height))  # Reset the in-memory image
+        self.draw = ImageDraw.Draw(self.image)  # Reinitialize the drawing context
+        self.display()
 
     def display(self):
         """displays current image"""
