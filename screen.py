@@ -3,6 +3,7 @@ import Adafruit_SSD1306
 
 class OLED:
     def __init__(self, font_size=16):
+        """SSD1306 adafruit OLED"""
         # initialize
         self.disp = Adafruit_SSD1306.SSD1306_128_64(rst=None, i2c_address=0x3C)  # 3C standard address
         self.disp.begin()
@@ -13,7 +14,7 @@ class OLED:
         self.image = Image.new('1', (self.width, self.height))  # 1 means binary colorscheme
         self.draw = ImageDraw.Draw(self.image)
 
-        self.font = ImageFont.load_default()
+        self.font = ImageFont.load_default(font_size)
 
     def clear_image(self):
         """clears image"""
