@@ -14,7 +14,7 @@ class OLED:
         self.image = Image.new('1', (self.width, self.height))  # 1 means binary colorscheme
         self.draw = ImageDraw.Draw(self.image)
 
-        self.font = ImageFont.load_default(font_size)
+        self.font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", font_size)
 
     def clear_image(self):
         """clears image"""
