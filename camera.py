@@ -1,4 +1,5 @@
 from picamzero import Camera
+import os
 
 
 class rpiCam:
@@ -23,3 +24,10 @@ class rpiCam:
         self.current_camera = Camera(self.resolution,self.brightness,self.contrast,self.greyscale,self.white_balance,self.gain)
         self.current_camera.flip_camera(self.flips[0],self.flips[1])
         return self.current_camera
+
+
+    def picture(self, path=str(os.path.abspath(os.path.join(os.path.dirname(__file__), '../camera_data/photos')))):
+        self.current_camera.take_photo(path)
+
+    def video(self, path=str(os.path.abspath(os.path.join(os.path.dirname(__file__), '../camera_data/videos'))), duration = 180000):
+        self.current_camera.take_video(path, duration)
