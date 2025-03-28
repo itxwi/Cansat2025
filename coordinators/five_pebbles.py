@@ -19,21 +19,18 @@ def type_write(word,delay=.02):
         OLED.display()
 
 while True:
+    messages = [
+        'west gate technology',
+        'atlas mechatronics team',
+        '3.1415926',
+        ':!@#$%^&*()-+',
+        ''
+    ]
     OLED.clear_image()
     type_write("whats up, world!")
-    OLED.clear_image()
-    OLED.draw_font("what what what what", (0,32))
-    OLED.display()
-    time.sleep(.02)
-    OLED.clear_image()
-    OLED.draw_font("atlas mechatronics team", (0,32))
-    OLED.display()
-    time.sleep(.02)
-    OLED.clear_image()
-    OLED.draw_font("westgate technology", (0,32))
-    OLED.display()
-    time.sleep(.02)
-    OLED.clear_image()
-    OLED.draw_font("3.14159", (0,32))
-    OLED.display()
-    time.sleep(.02)
+
+    for message in messages:
+        OLED.clear_image()
+        OLED.draw_font(message, (0,32))
+        OLED.display()
+        time.sleep(.5)  # Increased delay for better readability
