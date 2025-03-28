@@ -12,7 +12,13 @@ class rpiCam:
         self.flips = flips                      # Vertical flip, Horizontal flip
 
         self.resolution = resolution
-        self.current_camera = Camera(self.resolution,self.brightness,self.contrast,self.greyscale,self.white_balance,self.gain)
+        self.current_camera = Camera()
+
+        self.current_camera.brightness = self.brightness
+        self.current_camera.contrast = self.contrast
+        self.current_camera.gain = self.gain
+        self.current_camera.greyscale = self.greyscale
+        self.current_camera.white_balance = self.white_balance
 
         self.current_camera.flip_camera(flips[0],flips[1])
 
@@ -20,14 +26,25 @@ class rpiCam:
         """
         when making any adjustments to the cameras resolution during program runtime, you will need to create a new instance of the camera
         """
-        del self.current_camera
-        self.current_camera = Camera(self.resolution,self.brightness,self.contrast,self.greyscale,self.white_balance,self.gain)
+
+        self.current_camera.brightness = self.brightness
+        self.current_camera.contrast = self.contrast
+        self.current_camera.gain = self.gain
+        self.current_camera.greyscale = self.greyscale
+        self.current_camera.white_balance = self.white_balance
+
         self.current_camera.flip_camera(self.flips[0],self.flips[1])
         return self.current_camera
 
 
     def picture(self, path=str(os.path.abspath(os.path.join(os.path.dirname(__file__), '../camera_data/photos')))):
+        """
+        take a photo
+        """
         self.current_camera.take_photo(path)
 
     def video(self, path=str(os.path.abspath(os.path.join(os.path.dirname(__file__), '../camera_data/videos'))), duration = 180000):
+        """
+        take a video, duration is in ms
+        """
         self.current_camera.take_video(path, duration)
