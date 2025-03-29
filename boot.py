@@ -2,7 +2,7 @@ import time,os,subprocess
 import screen
 
 # configs
-COORDINATOR = "five_pebbles"
+COORDINATOR = "lttm"
 WAIT = 1
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
