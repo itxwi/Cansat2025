@@ -9,10 +9,10 @@ class Sensor:
         self.bme680.sea_level_pressure = sea_level
     
 
-    def setPressure(self, pressure = 1013.25):
+    def set_pressure(self, pressure = 1013.25):
         self.bme680.sea_level_pressure = pressure
 
-    def getData(self,temp_offset = -5, place=2):
+    def get_data(self,temp_offset = -5, place=2):
 
         """
         {
