@@ -4,9 +4,13 @@ import sys,os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import camera
-print("camera libarieid")
+print("library called, takes time")
 
 myCamera = camera.rpiCam()
-print("camera made, takin picture")
+print("camera made")
+print("taking picture")
 myCamera.picture('nice')
 print("picture taken")
+print("taking video")
+myCamera.video('fun',duration=1000)
+print("video taken")

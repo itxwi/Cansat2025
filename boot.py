@@ -3,7 +3,7 @@ import screen
 
 # configs
 COORDINATOR = "lttm"
-WAIT = 1
+WAIT = 3
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COORDINATOR_PATH = os.path.join(BASE_DIR,"coordinators",f"{COORDINATOR}.py")

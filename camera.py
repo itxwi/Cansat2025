@@ -49,9 +49,9 @@ class rpiCam:
         path = os.path.join(directory, f'{name}.jpg')
         self.current_camera.take_photo(path)
 
-    def video(self, name, duration=180000):
+    def video(self, name, duration=10):
         """
-        Take a video. Ensures the directory exists before saving. Duration is in ms.
+        Take a video. Ensures the directory exists before saving. Duration is in seconds. Default is 10 second
         """
         directory = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/videos'))
         if not os.path.exists(directory):
