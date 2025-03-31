@@ -19,7 +19,9 @@ if screen_on:
     OLED.clear_image()
     OLED.draw_font(f"Atlas {COORDINATOR}", (0,32))
     OLED.display()
+    
 time.sleep(WAIT)
+
 if screen_on:
     OLED.clear_image()
     OLED.display()
