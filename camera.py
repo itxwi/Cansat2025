@@ -1,14 +1,20 @@
 from picamzero import Camera
 import os
-
+import subprocess
 
 class rpiCam:
-    def __init__(self, resolution, brightness = 0, contrast = 1, greyscale = False, white_balance = 'auto', flips = (True,False)):
-        self.brightness = brightness            # -1 ~ 1
-        self.contrast = contrast                # 0 ~ 32
-        self.greyscale = greyscale              # Bool
-        self.white_balance = white_balance      # 'auto', 'tungsten', 'fluorescent', 'indoor' , 'daylight', 'cloudy'
-        self.flips = flips                      # Vertical flip, Horizontal flip
+    def __init__(self,
+                 resolution,
+                 brightness=0,
+                 contrast=1,
+                 greyscale=False,
+                 white_balance='auto',
+                 flips=(True, False)):
+        self.brightness = brightness
+        self.contrast = contrast
+        self.greyscale = greyscale
+        self.white_balance = white_balance
+        self.flips = flips
         self.resolution = resolution
 
         self.current_camera = Camera()
@@ -20,13 +26,9 @@ class rpiCam:
         self.current_camera.greyscale = self.greyscale
         self.current_camera.white_balance = self.white_balance
 
-        self.current_camera.flip_camera(flips[0],flips[1])
+        self.current_camera.flip_camera(flips[0], flips[1])
 
     def get_camera(self):
-        """
-        when making any adjustments to the cameras resolution during program runtime run this function
-        """
-
         self.current_camera.video_size = self.resolution
         self.current_camera.still_size = self.resolution
         self.current_camera.brightness = self.brightness
@@ -34,28 +36,40 @@ class rpiCam:
         self.current_camera.greyscale = self.greyscale
         self.current_camera.white_balance = self.white_balance
 
-        self.current_camera.flip_camera(self.flips[0],self.flips[1])
+        self.current_camera.flip_camera(self.flips[0], self.flips[1])
         return self.current_camera
 
-
     def picture(self, name):
-        """
-        Take a photo. Ensures the directory exists before saving.
-        """
         directory = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/photos'))
         if not os.path.exists(directory):
-            os.makedirs(directory) 
+            os.makedirs(directory)
 
         path = os.path.join(directory, f'{name}.jpg')
         self.current_camera.take_photo(path)
 
     def video(self, name, duration=10):
         """
-        Take a video. Ensures the directory exists before saving. Duration is in seconds. Default is 10 second
+        Takes a video and saves it as MP4.
+        - Captures to H264 to avoid timestamp issues.
+        - Converts to MP4 using ffmpeg.
         """
-        directory = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/videos'))
-        if not os.path.exists(directory):
-            os.makedirs(directory)  
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/videos'))
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
 
-        path = os.path.join(directory, f'{name}.mp4')
-        self.current_camera.take_video(path, duration)
+        h264_path = os.path.join(base_dir, f'{name}.h264')
+        mp4_path = os.path.join(base_dir, f'{name}.mp4')
+
+        self.current_camera.take_video(h264_path, duration)
+
+        # Convert to MP4 using ffmpeg
+        subprocess.run([
+            'ffmpeg', '-y',
+            '-framerate', '30',
+            '-i', h264_path,
+            '-c', 'copy',
+            mp4_path
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        # Optionally delete .h264 after conversion
+        os.remove(h264_path)
