@@ -53,23 +53,31 @@ class rpiCam:
         - Captures to H264 to avoid timestamp issues.
         - Converts to MP4 using ffmpeg.
         """
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/videos'))
-        if not os.path.exists(base_dir):
-            os.makedirs(base_dir)
+        
+        # base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/videos'))
+        # if not os.path.exists(base_dir):
+        #     os.makedirs(base_dir)
 
-        h264_path = os.path.join(base_dir, f'{name}.h264')
-        mp4_path = os.path.join(base_dir, f'{name}.mp4')
+        # h264_path = os.path.join(base_dir, f'{name}.h264')
+        # mp4_path = os.path.join(base_dir, f'{name}.mp4')
 
-        self.current_camera.take_video(h264_path, duration)
+        # self.current_camera.take_video(h264_path, duration)
 
-        # Convert to MP4 using ffmpeg
-        subprocess.run([
-            'ffmpeg', '-y',
-            '-framerate', '30',
-            '-i', h264_path,
-            '-c', 'copy',
-            mp4_path
-        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # # Convert to MP4 using ffmpeg
+        # subprocess.run([
+        #     'ffmpeg', '-y',
+        #     '-framerate', '30',
+        #     '-i', h264_path,
+        #     '-c', 'copy',
+        #     mp4_path
+        # ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        # Optionally delete .h264 after conversion
-        os.remove(h264_path)
+        # # Optionally delete .h264 after conversion
+        # os.remove(h264_path)
+
+        directory = os.path.abspath(os.path.join(os.path.dirname(__file__), 'camera_data/videos'))
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        path = os.path.join(directory, f'{name}.h264')
+        self.current_camera.take_video(path, duration)
