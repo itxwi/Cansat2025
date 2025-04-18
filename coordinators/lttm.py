@@ -13,5 +13,5 @@ myCamera = camera.rpiCam((1000,1000))
 # print("picture taken")
 for x in range(5):
     print(f"taking video {x}")
-    myCamera.video(f'die {x}',duration=10)
+    myCamera.video(f'test {x}',duration=10)
     print("video taken")
