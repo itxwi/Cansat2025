@@ -8,6 +8,7 @@ class Radio:
     Address (Local group, unique to each RYRL device in a Network ID) [0~2^16]
     Cansat will utilize Point to Point communications
     Serial buffers utilize bits instead of strings, use b'' strings or encode/decode with UTF-8
+    https://reyax.com/upload/products_download/download_file/LoRa_AT_Command_RYLR998_RYLR498_EN.pdf
     """
 
     def __init__(self,debug=False,BAUDRATE=115200,readTime = .25):
@@ -21,10 +22,10 @@ class Radio:
         time.sleep(self.readTime)
         response = self.ser.read(self.ser.inWaiting()).decode()
         if "OK" in response:
-            print("Connection is OK.")
+            #print("Connection is OK.")
             return True
         else:
-            print("Connection is not OK.")
+            #print("Connection is not OK.")
             return False
 
     def check_address(self):
@@ -48,6 +49,15 @@ class Radio:
     def check_rfband(self):
         # Returns RF Band
         self.ser.write(b'AT+BAND?\r\n')
+        time.sleep(self.readTime)
+        response = self.ser.read(self.ser.inWaiting()).decode()
+        if self.debug:
+            print(response)
+        return response
+    
+    def set_band(self, band = 905000000):
+        # Set bandwith to parameter
+        self.ser.write(f'AT+BAND={band}\r\n'.encode('UTF-8'))
         time.sleep(self.readTime)
         response = self.ser.read(self.ser.inWaiting()).decode()
         if self.debug:
