@@ -7,6 +7,9 @@ import radio
 
 myRadio = radio.Radio(debug=True)
 
+myRadio.set_address()
+myRadio.set_networkid()
+
 print(f"connection: {myRadio.check_connection()}")
 print(f'address: {myRadio.check_address()}')
 print(f"network ID {myRadio.check_networkid()}")

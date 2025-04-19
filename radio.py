@@ -64,6 +64,25 @@ class Radio:
             print(response)
         return response
     
+    def set_networkid(self, network = 1):
+        #AT+NETWORKID
+        # Set bandwith to parameter
+        self.ser.write(f'AT+NETWORKID={network}\r\n'.encode('UTF-8'))
+        time.sleep(self.readTime)
+        response = self.ser.read(self.ser.inWaiting()).decode()
+        if self.debug:
+            print(response)
+        return response
+    
+    def set_address(self,address=101):
+        #AT+ADDRESS
+        self.ser.write(f'AT+ADDRESS={address}\r\n'.encode('UTF-8'))
+        time.sleep(self.readTime)
+        response = self.ser.read(self.ser.inWaiting()).decode()
+        if self.debug:
+            print(response)
+        return response
+
     def send_serial(self,data):
         # Send custom commands
         # Encoding and decoding serial monitor in python is not reliable, if possible utilze the other options

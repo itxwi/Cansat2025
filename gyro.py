@@ -7,30 +7,38 @@ class Gyro:
         self.gyro_offset = {k: 0 for k in axis}
         self.accel_offset = {k: 0 for k in axis}
 
-        self.mpu6050 = mpu6050.mpu6050(0x68)
+        self.mpu6050 = mpu6050.mpu6050(0x53)
 
     def get_data(self, place=2, calibrating=False):
-        accel_data = self.mpu6050.get_accel_data()
-        gyro_data = self.mpu6050.get_gyro_data()
+        try:
+            accel_data = self.mpu6050.get_accel_data()
+            gyro_data = self.mpu6050.get_gyro_data()
 
-        if not calibrating:
-            for dim in gyro_data:
-                gyro_data[dim] -= self.gyro_offset[dim]
-            
-            for dim in accel_data:
-                accel_data[dim] -= self.accel_offset[dim]
+            if not calibrating:
+                for dim in gyro_data:
+                    gyro_data[dim] -= self.gyro_offset[dim]
+                
+                for dim in accel_data:
+                    accel_data[dim] -= self.accel_offset[dim]
 
-        packaged_data = {
-            'accel': accel_data,
-            'gyro': gyro_data
-        }
+            packaged_data = {
+                'accel': accel_data,
+                'gyro': gyro_data
+            }
 
-        if place != None:
-            for key in packaged_data:
-                for dim in packaged_data[key]:
-                    packaged_data[key][dim] = round(packaged_data[key][dim], place)
+            if place != None:
+                for key in packaged_data:
+                    for dim in packaged_data[key]:
+                        packaged_data[key][dim] = round(packaged_data[key][dim], place)
 
-        return packaged_data
+            return packaged_data
+        except OSError as e:
+            if e.errno == 5:
+                print("gyro cable disconnected, data lost")
+            else:
+                raise  # Re-raise other OSErrors
+        except Exception as e:
+            print(f"unexpected error: {e}")
 
     def calibrate(self, rounds=100, delay=0.01):
         for _ in range(rounds):
@@ -51,3 +59,9 @@ class Gyro:
             "gyro_offset": self.gyro_offset,
             "accel_offset": self.accel_offset
         }
+
+
+# myGyro = Gyro()
+# myGyro.calibrate()
+# while True:
+#     print(myGyro.get_data())

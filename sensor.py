@@ -22,18 +22,25 @@ class Sensor:
             "gas": bme680.gas,
             "humidity":bme680.relative_humidity}
         """
+        try:
+            data = {
+                "temp": self.bme680.temperature + temp_offset,
+                "pressure": self.bme680.pressure,
+                "altitude":self.bme680.altitude,
+                "gas": self.bme680.gas,
+                "humidity":self.bme680.relative_humidity
+                }
 
-        data = {
-            "temp": self.bme680.temperature + temp_offset,
-            "pressure": self.bme680.pressure,
-            "altitude":self.bme680.altitude,
-            "gas": self.bme680.gas,
-            "humidity":self.bme680.relative_humidity
-            }
-
-        if place:
-            return {
-                k:round(v,place) for k,v in data.items()
-            }
-        else:
-            return data
+            if place:
+                return {
+                    k:round(v,place) for k,v in data.items()
+                }
+            else:
+                return data
+        except OSError as e:
+            if e.errno == 5:
+                print("sensor cable disconnected, data lost")
+            else:
+                raise  # Re-raise other OSErrors
+        except Exception as e:
+            print(f"unexpected error: {e}")
