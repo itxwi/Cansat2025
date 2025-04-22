@@ -1,6 +1,7 @@
 import time
 import serial
-
+import json
+import os
 
 class Radio:
     """
@@ -12,9 +13,10 @@ class Radio:
     https://reyax.com/upload/products_download/download_file/LoRa_AT_Command_RYLR998_RYLR498_EN.pdf
     """
     
-    def __init__(self,debug=False,BAUDRATE=115200):
+    def __init__(self,debug=False,BAUDRATE=115200,filename="radiolog"):
         self.ser = serial.Serial('/dev/ttyS0', baudrate=BAUDRATE)
         self.debug = debug
+        self.filename = filename
         
         self.send_at("AT+BAND=905000000")
         self.send_at("AT+NETWORKID=3")
@@ -70,7 +72,20 @@ class Radio:
                 lastrecieved=time.time()
                 received_message = self.recieve()
                 if received_message:
-                    print(received_message)
+                    
+                    
+
+                    if os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+                        with open(self.filename, "r") as file:
+                            data = json.load(file)
+                    else:
+                        data = []
+
+
+                    json.dump(data)
+
+                    if self.debug:
+                        print(received_message)
 
     def transmit(self,data):
         """

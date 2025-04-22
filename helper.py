@@ -1,3 +1,6 @@
+import json
+
+
 class Enums:
     def __init__(self):
         """

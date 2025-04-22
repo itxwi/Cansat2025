@@ -35,6 +35,6 @@ last_checked = time.time()
 while True:
     if time.time()-last_checked>=UPDATETIME:
         last_checked=time.time()
-        packet[time.time()] = {
-        }
+        packet[time.time()] = {}
         oradio.transmit(packet)
+
