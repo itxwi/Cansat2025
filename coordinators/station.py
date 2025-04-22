@@ -1,9 +1,9 @@
 # coordinator requisit
-print("launched")
+print("Station Booted!")
 import sys,os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import radio
+import radio,screen
 
 #Receive example
 station_radio = radio.Radio(debug=True)
