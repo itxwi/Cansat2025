@@ -1,6 +1,6 @@
-import serial
 import time
-import json
+import serial
+
 
 class Radio:
     """
@@ -8,148 +8,94 @@ class Radio:
     Address (Local group, unique to each RYRL device in a Network ID) [0~2^16]
     Cansat will utilize Point to Point communications
     Serial buffers utilize bits instead of strings, use b'' strings or encode/decode with UTF-8
+    AT COMMAND GUIDE
     https://reyax.com/upload/products_download/download_file/LoRa_AT_Command_RYLR998_RYLR498_EN.pdf
     """
-
-    def __init__(self,debug=False,BAUDRATE=115200,readTime = .25):
-        self.ser = serial.Serial('/dev/serial0', baudrate=BAUDRATE, timeout=1,)
-        self.debug = debug              # Enables printing in console
-        self.readTime = readTime        # Time waited before reading serial buffer
     
-    def check_connection(self):
-        # Returns a Boolean based on RYRL998 Status
-        self.ser.write(b'AT\r\n')
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if "OK" in response:
-            #print("Connection is OK.")
-            return True
-        else:
-            #print("Connection is not OK.")
-            return False
-
-    def check_address(self):
-        # Returns the address
-        self.ser.write(b'AT+ADDRESS?\r\n')
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-    
-    def check_networkid(self):
-        # Returns Network ID
-        self.ser.write(b'AT+NETWORKID?\r\n')
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-
-    def check_rfband(self):
-        # Returns RF Band
-        self.ser.write(b'AT+BAND?\r\n')
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-    
-    def set_band(self, band = 905000000):
-        # Set bandwith to parameter
-        self.ser.write(f'AT+BAND={band}\r\n'.encode('UTF-8'))
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-    
-    def set_networkid(self, network = 1):
-        #AT+NETWORKID
-        # Set bandwith to parameter
-        self.ser.write(f'AT+NETWORKID={network}\r\n'.encode('UTF-8'))
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-    
-    def set_address(self,address=101):
-        #AT+ADDRESS
-        self.ser.write(f'AT+ADDRESS={address}\r\n'.encode('UTF-8'))
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-
-    def send_serial(self,data):
-        # Send custom commands
-        # Encoding and decoding serial monitor in python is not reliable, if possible utilze the other options
-        self.ser.write(f'{data}\r\n'.encode('UTF-8'))
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-    
-    def close(self):
-        # Closes RYRL998
-        self.ser.close()
-        return True
-    
-    def reset(self):
-        # Factory Reset
-        self.ser.write(b'AT+RESET\r\n')
-        time.sleep(self.readTime)
-        response = self.ser.read(self.ser.inWaiting()).decode()
-        if self.debug:
-            print(response)
-        return response
-    
-    def transmit(self,address,data):
-        # Transmits data to the address of reciving RYRL998
-        # Maxiumum of 240 bytes
-    
-        self.ser.write(f'AT+SEND={address},{len(data)},{data}\r\n'.encode('UTF-8'))
-
-    
-    def receive(self):
+    def __init__(self,debug=False,BAUDRATE=115200):
+        self.ser = serial.Serial('/dev/ttyS0', baudrate=BAUDRATE)
+        self.debug = debug
         
-        global log
-        try:
-            with open('log.json', "r") as file:
-                log = json.load(file)
-        except:
-            log = {}
+        self.send_at("AT+BAND=905000000")
+        self.send_at("AT+NETWORKID=3")
 
-        try:
-            while True:
-                if self.ser.in_waiting > 0:
-                    data = self.ser.readline().decode('utf-8').strip()
-                    if data:
-                        current_time = time.time() # UNIX Timestamp
-                        #print(f"[{current_time}] Received data: {data}")
+        if debug:
+            print("Bandwitdth:" + self.send_at("AT+BAND?"))
+            print("Network:" + self.send_at("AT+NETWORKID?"))
 
-                        log[str(current_time)] = data
+    def send_at(self,command, expected_response="OK", timeout=1):
+        """
+        send any at commands through serial
+        """
+        self.ser.write((command + "\r\n").encode())
+        self.ser.flush()
+        response = ""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            if self.ser.in_waiting > 0:
+                response += self.ser.read(self.ser.in_waiting).decode()
+                if expected_response in response:
+                    return response
+        return response
+    
+    def set_address(self,address):
+        if self.debug:
+            print(self.send_at(f"AT+ADDRESS={address}"))
+            return
+        self.send_at(f"AT+ADDRESS={address}")
 
 
-                        # debuging
-                        if data.startswith("+RCV=") and self.debug:
-                            parts = data.split(',')
-                            node_id, msg_len, message, rssi, snr = parts[0], parts[1], parts[2], parts[3], parts[4]
-                            print(f"[{current_time}] Node ID: {node_id}, Message: {message}, RSSI: {rssi}, SNR: {snr}")
-                        
-                        # revamp later
-                        with open('radioLog.json', "w") as file:
-                            json.dump(log, file, indent=4)
+    def recieve(self):
+        """
+        receiving the transmission
+        """
+        received_data = ""
+        start_time = time.time()
+        while time.time() - start_time < 1:
+            if self.ser.in_waiting > 0:
+                received_data += self.ser.read(self.ser.in_waiting).decode()
+                return received_data
+            time.sleep(0.1)
+        return None
 
-                                
-                time.sleep(0.1)
+    def station(self,check=.5):
+        """
+        run this function when you are station
+        """
+        print("Receving")
 
-        except KeyboardInterrupt:
-            print("\nProgram stopped by user.")
-        except serial.SerialException as e:
-            print(f"Serial Error: {e}")
-        finally:
-            print("Serial monitoring stopped.")
+        while True:
+            lastrecieved = time.time()
+            if time.time()-lastrecieved>check:
+                lastrecieved=time.time()
+                received_message = self.recieve()
+                if received_message:
+                    print(received_message)
+
+    def transmit(self,data):
+        """
+        pipes to send_at but more legible
+        """
+        if self.debug:
+            print(self.send_at(f"AT+SEND=101,{len(data)},{data}"))
+            return
+        self.send_at(f"AT+SEND=101,{len(data)},{data}")
+"""
+#Transmit example
+
+cansat_radio = Radio(debug=True)
+lasttransmit = time.time()
+counter = 0
+while True:
+    if time.time()-lasttransmit>1:
+        counter+=1
+        lasttransmit=time.time()
+        cansat_radio.transmit(f'counter: {counter}')
+"""
+
+"""
+#Receive example
+station_radio = Radio(debug=True)
+station_radio.station()
+
+"""

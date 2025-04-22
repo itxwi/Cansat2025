@@ -1,42 +1,38 @@
-import mpu6050
 import time
+import board
+import busio
+import adafruit_adxl34x
 
 class Gyro:
     def __init__(self):
-        axis = ['x', 'y', 'z']
-        self.gyro_offset = {k: 0 for k in axis}
-        self.accel_offset = {k: 0 for k in axis}
+        self.axis = ['x', 'y', 'z']
+        self.accel_offset = {k: 0 for k in self.axis}
 
-        self.mpu6050 = mpu6050.mpu6050(0x53)
+        # Set up I2C and ADXL345
+        i2c = busio.I2C(board.SCL, board.SDA)
+        self.accel = adafruit_adxl34x.ADXL345(i2c)
+        self.accel.address = 0x53  # Just to be explicit
 
     def get_data(self, place=2, calibrating=False):
         try:
-            accel_data = self.mpu6050.get_accel_data()
-            gyro_data = self.mpu6050.get_gyro_data()
+            x, y, z = self.accel.acceleration
+            accel_data = dict(zip(self.axis, (x, y, z)))
 
             if not calibrating:
-                for dim in gyro_data:
-                    gyro_data[dim] -= self.gyro_offset[dim]
-                
-                for dim in accel_data:
+                for dim in self.axis:
                     accel_data[dim] -= self.accel_offset[dim]
 
-            packaged_data = {
-                'accel': accel_data,
-                'gyro': gyro_data
-            }
+            if place is not None:
+                for dim in self.axis:
+                    accel_data[dim] = round(accel_data[dim], place)
 
-            if place != None:
-                for key in packaged_data:
-                    for dim in packaged_data[key]:
-                        packaged_data[key][dim] = round(packaged_data[key][dim], place)
+            return {'accel': accel_data}
 
-            return packaged_data
         except OSError as e:
             if e.errno == 5:
-                print("gyro cable disconnected, data lost")
+                print("accelerometer cable disconnected, data lost")
             else:
-                raise  # Re-raise other OSErrors
+                raise
         except Exception as e:
             print(f"unexpected error: {e}")
 
@@ -44,24 +40,23 @@ class Gyro:
         for _ in range(rounds):
             if delay > 0:
                 time.sleep(delay)
-            data = self.get_data(None, calibrating=True)
+            data = self.get_data(place=None, calibrating=True)
 
-            for dim in data['gyro']:
-                self.gyro_offset[dim] += data['gyro'][dim]
-
-            for dim in data['accel']:
+            for dim in self.axis:
                 self.accel_offset[dim] += data['accel'][dim]
 
-        self.gyro_offset = {key: self.gyro_offset[key] / rounds for key in self.gyro_offset}
-        self.accel_offset = {key: self.accel_offset[key] / rounds for key in self.accel_offset}
-        print('Done calibration')
+        self.accel_offset = {
+            dim: self.accel_offset[dim] / rounds for dim in self.axis
+        }
+
+        print("Done calibration")
         return {
-            "gyro_offset": self.gyro_offset,
             "accel_offset": self.accel_offset
         }
 
-
-# myGyro = Gyro()
-# myGyro.calibrate()
+# Example usage:
+# accel = Accelerometer()
+# accel.calibrate()
 # while True:
-#     print(myGyro.get_data())
+#     print(accel.get_data())
+#     time.sleep(0.5)

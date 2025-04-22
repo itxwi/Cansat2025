@@ -56,3 +56,5 @@ class rpiCam:
 
         # Capture the video in H264 format
         self.current_camera.take_video(h264_path, duration)
+
+        

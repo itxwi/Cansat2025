@@ -14,5 +14,5 @@ print(f'done calibration, time elapsed: {round(time.monotonic(),2)-round(start,2
 
 while True:
     time.sleep(.5)
-    print(current_sensor.getData())
+    print(current_sensor.get_data())
     print(current_gyro.get_data())

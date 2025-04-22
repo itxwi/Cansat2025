@@ -1,22 +1,16 @@
 # coordinator requisit
-import sys,os
+import sys,os,time
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import radio
 
-myRadio = radio.Radio(debug=True)
+#Transmit example
 
-print(f"connection: {myRadio.check_connection()}")
-print(f'address: {myRadio.check_address()}')
-print(f"network ID {myRadio.check_networkid()}")
-
-myRadio.set_band()
-
-print(f"rfband: {myRadio.check_rfband()}")
-
-target_address = None
-
+cansat_radio = radio.Radio(debug=True)
+lasttransmit = time.time()
+counter = 0
 while True:
-    user_input = input()
-    
-    myRadio.transmit(target_address, user_input)
+    if time.time()-lasttransmit>1:
+        counter+=1
+        lasttransmit=time.time()
+        cansat_radio.transmit(f'counter: {counter}')
