@@ -26,7 +26,7 @@ class Gyro:
                 for dim in self.axis:
                     accel_data[dim] = round(accel_data[dim], place)
 
-            return {'accel': accel_data}
+            return accel_data
 
         except OSError as e:
             if e.errno == 5:
@@ -50,9 +50,7 @@ class Gyro:
         }
 
         print("Done calibration")
-        return {
-            "accel_offset": self.accel_offset
-        }
+        return self.accel_offset
 
 # Example usage:
 # accel = Accelerometer()

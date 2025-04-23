@@ -2,7 +2,7 @@ import time,os,subprocess
 import screen
 
 # configs
-COORDINATOR = "lttm"
+COORDINATOR = "cansat2025"
 WAIT = 0
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
