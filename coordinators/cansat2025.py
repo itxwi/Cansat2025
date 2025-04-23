@@ -28,23 +28,23 @@ data_manger = helper.DataManager()
 
 print("modules received")
 
-time.sleep(2)
-print('calibrating')
-ogyro.calibrate(rounds=1000)
+#time.sleep(2)
+#print('calibrating')
+#ogyro.calibrate(rounds=1000)
 
 def cansat_transmit():
-    packet = {}
-    data_gyro=ogyro.get_data()
-    data_sensor=osensor.get_data()
-
     last_checked = time.time()
     while True:
         if time.time()-last_checked>=UPDATETIME:
+            data_gyro=ogyro.get_data()
+            data_sensor=osensor.get_data()
+            packet = {}
             last_checked=time.time()
-            packet[time.time()] = {'gyro':data_gyro,'sensor':data_sensor}
             
-            data_manger.append_data()
-
+            packet[last_checked] = {'gyro':data_gyro,'sensor':data_sensor}
+            print("transmitted")
+            print(packet)
+            data_manger.append_data(last_checked,packet)
             oradio.transmit(packet)
             
 
