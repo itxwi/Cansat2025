@@ -65,24 +65,24 @@ class Radio:
         run this function when you are station
         """
         print("Receving")
-
+        lastrecieved = time.time()
         while True:
-            lastrecieved = time.time()
             if time.time()-lastrecieved>check:
+                
                 lastrecieved=time.time()
                 received_message = self.recieve()
                 if received_message:
                     
                     
 
-                    if os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
-                        with open(self.filename, "r") as file:
-                            data = json.load(file)
-                    else:
-                        data = []
+                    # if os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+                    #     with open(self.filename, "r") as file:
+                    #         data = json.load(file)
+                    # else:
+                    #     data = []
 
 
-                    json.dump(data)
+                    # json.dump(data)
 
                     if self.debug:
                         print(received_message)

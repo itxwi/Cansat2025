@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import json
 import radio,camera,gyro,sensor
 import helper
+import threading
 
 UPDATETIME = .2
 
@@ -27,14 +28,30 @@ enums = helper.Enums()
 time.sleep(2)
 print('calibrating')
 ogyro.calibrate(rounds=1000)
-packet = {}
-data_gyro=ogyro.get_data()
-data_sensor=osensor.get_data()
 
-last_checked = time.time()
-while True:
-    if time.time()-last_checked>=UPDATETIME:
-        last_checked=time.time()
-        packet[time.time()] = {}
-        oradio.transmit(packet)
+def cansat_transmit():
+    packet = {}
+    data_gyro=ogyro.get_data()
+    data_sensor=osensor.get_data()
 
+    last_checked = time.time()
+    while True:
+        if time.time()-last_checked>=UPDATETIME:
+            last_checked=time.time()
+            packet[time.time()] = {data_gyro,data_sensor}
+            print(packet)
+            #oradio.transmit(packet)
+
+def cansat_video():
+    x=0
+    while True:
+        x+=1
+        print(f"taking video {x}")
+        ocamera.video(f'test{x}',duration=10)
+        print("video taken")
+
+thread1 = threading.Thread(target=cansat_transmit)
+thread2 = threading.Thread(target=cansat_video)
+
+thread1.start()
+thread2.start()

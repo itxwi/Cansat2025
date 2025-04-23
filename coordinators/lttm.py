@@ -11,7 +11,9 @@ myCamera = camera.rpiCam((1000,1000))
 # print("taking picture")
 # myCamera.picture('nice')
 # print("picture taken")
-for x in range(5):
+x=0
+while True:
+    x+=1
     print(f"taking video {x}")
-    myCamera.video(f'test {x}',duration=10)
+    myCamera.video(f'test{x}',duration=10)
     print("video taken")
