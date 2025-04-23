@@ -1,5 +1,6 @@
 import json
-
+import os, sys
+import time
 
 class Enums:
     def __init__(self):
@@ -101,3 +102,38 @@ class Enums:
 
         result = integer_value + fractional_value
         return -result if is_negative else result
+    
+
+class DataManager:
+    def __init__(self):
+        # Define the logs directory
+        logs_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'logs'))
+        if not os.path.exists(logs_dir):
+            os.makedirs(logs_dir)  # Create the logs directory if it doesn't exist
+
+        # Set the log file path
+        self.filename = os.path.join(logs_dir, f'log_{str(time.time())}.json')
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+    def append_data(self, key, value):
+        """
+        Append a key-value pair to the log file.
+        """
+        if os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+            with open(self.filename, 'r') as file:
+                data = json.load(file)
+        else:
+            data = {}
+
+        data[key] = value
+
+        with open(self.filename, 'w') as file:
+            json.dump(data, file, indent=4)
+
+    def clear_log(self):
+        """
+        Clear the log file by overwriting it with an empty dictionary.
+        """
+        data = {}
+        with open(self.filename, 'w') as file:
+            json.dump(data, file, indent=4)

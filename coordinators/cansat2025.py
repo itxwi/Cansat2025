@@ -23,7 +23,9 @@ ocamera = camera.rpiCam((1000,1000))
 osensor = sensor.Sensor()
 oradio = radio.Radio()
 
-enums = helper.Enums()
+#enums = helper.Enums()
+data_manger = helper.DataManager()
+
 print("modules received")
 
 time.sleep(2)
@@ -41,8 +43,10 @@ def cansat_transmit():
             last_checked=time.time()
             packet[time.time()] = {'gyro':data_gyro,'sensor':data_sensor}
             
-            print(packet)
-            #oradio.transmit(packet)
+            data_manger.append_data()
+
+            oradio.transmit(packet)
+            
 
 def cansat_video():
     x=0
