@@ -40,6 +40,7 @@ def cansat_transmit():
         if time.time()-last_checked>=UPDATETIME:
             last_checked=time.time()
             packet[time.time()] = {'gyro':data_gyro,'sensor':data_sensor}
+            
             print(packet)
             #oradio.transmit(packet)
 
