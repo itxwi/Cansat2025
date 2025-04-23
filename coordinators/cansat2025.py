@@ -24,7 +24,7 @@ osensor = sensor.Sensor()
 oradio = radio.Radio()
 
 enums = helper.Enums()
-print("modules recieved")
+print("modules received")
 
 time.sleep(2)
 print('calibrating')
@@ -39,11 +39,7 @@ def cansat_transmit():
     while True:
         if time.time()-last_checked>=UPDATETIME:
             last_checked=time.time()
-            #packet[time.time()] = {data_gyro,data_sensor}
-            print(data_gyro)
-
-            print(data_sensor)
-            
+            packet[time.time()] = {'gyro':data_gyro,'sensor':data_sensor}
             print(packet)
             #oradio.transmit(packet)
 

@@ -24,11 +24,11 @@ class Sensor:
         """
         try:
             data = {
-                "temp": self.bme680.temperature + temp_offset,
-                "pressure": self.bme680.pressure,
-                "altitude":self.bme680.altitude,
-                "gas": self.bme680.gas,
-                "humidity":self.bme680.relative_humidity
+                "t": self.bme680.temperature + temp_offset,
+                "p": self.bme680.pressure,
+                "a":self.bme680.altitude,
+                "g": self.bme680.gas,
+                "h":self.bme680.relative_humidity
                 }
 
             if place:

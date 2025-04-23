@@ -43,7 +43,7 @@ class Gyro:
             data = self.get_data(place=None, calibrating=True)
 
             for dim in self.axis:
-                self.accel_offset[dim] += data['accel'][dim]
+                self.accel_offset[dim] += data[dim]
 
         self.accel_offset = {
             dim: self.accel_offset[dim] / rounds for dim in self.axis
