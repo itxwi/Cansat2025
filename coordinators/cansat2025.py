@@ -28,9 +28,9 @@ data_manger = helper.DataManager()
 
 print("modules received")
 
-#time.sleep(2)
-#print('calibrating')
-#ogyro.calibrate(rounds=1000)
+time.sleep(2)
+print('calibrating')
+ogyro.calibrate(rounds=1000)
 
 def cansat_transmit():
     last_checked = time.time()

@@ -1,7 +1,6 @@
 import time
 import serial
-import json
-import os
+import helper
 
 class Radio:
     """
@@ -20,7 +19,6 @@ class Radio:
         
         self.send_at("AT+BAND=905000000")
         self.send_at("AT+NETWORKID=3")
-
         if debug:
             print("Bandwitdth:" + self.send_at("AT+BAND?"))
             print("Network:" + self.send_at("AT+NETWORKID?"))
@@ -64,6 +62,9 @@ class Radio:
         """
         run this function when you are station
         """
+
+        data_manager = helper.DataManager()
+
         print("Receving")
         lastrecieved = time.time()
         while True:
@@ -73,16 +74,15 @@ class Radio:
                 received_message = self.recieve()
                 if received_message:
                     
-                    
-
                     # if os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
                     #     with open(self.filename, "r") as file:
                     #         data = json.load(file)
                     # else:
                     #     data = []
-
-
                     # json.dump(data)
+                    
+                    data_manager.append_data(time.time(),received_message)
+                    print()
 
                     if self.debug:
                         print(received_message)
