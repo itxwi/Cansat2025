@@ -7,4 +7,5 @@ import radio,screen
 
 #Receive example
 station_radio = radio.Radio(debug=True)
+station_radio.set_address(101)
 station_radio.station()

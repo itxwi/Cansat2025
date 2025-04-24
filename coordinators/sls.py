@@ -8,6 +8,7 @@ import radio
 
 cansat_radio = radio.Radio(debug=True)
 lasttransmit = time.time()
+cansat_radio.set_address(102)
 counter = 0
 while True:
     if time.time()-lasttransmit>1:

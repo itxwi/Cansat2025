@@ -12,25 +12,38 @@ UPDATETIME = .2
 
 """
 The cansat should immedietly begin to
-- Log information in unconverted form
-- Send information in a converted form
-- Take imagery simultaneously
+- Log information in unconverted form ✅
+- Send information in a converted form 
+- Take imagery simultaneously ✅
 """
 
 print('initalizing')
 ogyro = gyro.Gyro()
-ocamera = camera.rpiCam((1000,1000))
+#ocamera = camera.rpiCam((1000,1000))
 osensor = sensor.Sensor()
-oradio = radio.Radio()
+oradio = radio.Radio(debug=True)
 
 #enums = helper.Enums()
 data_manger = helper.DataManager()
 
 print("modules received")
 
-time.sleep(2)
+#time.sleep(2)
 print('calibrating')
-ogyro.calibrate(rounds=1000)
+#ogyro.calibrate(rounds=1000)
+print('setting address to 102')
+oradio.set_address(102)
+
+def convert_transmitable(packets):
+    transmission = ''
+    print(packets)
+    for packet in packets:
+        for key in packets[packet]:
+            transmission+=f'{key}:{packets[packet][key]}~'
+
+    #print(transmission)
+    return transmission[0:len(transmission)-1]
+        
 
 def cansat_transmit():
     last_checked = time.time()
@@ -41,23 +54,28 @@ def cansat_transmit():
             packet = {}
             last_checked=time.time()
             
-            packet[last_checked] = {'gyro':data_gyro,'sensor':data_sensor}
+            packets = {'gyro':data_gyro,'sensor':data_sensor}
             print("transmitted")
-            print(packet)
-            data_manger.append_data(last_checked,packet)
-            oradio.transmit(packet)
-            
+            transmittable = convert_transmitable(packets)
+            #print(transmittable)
+            data_manger.append_data(last_checked,packets)
+            oradio.transmit(transmittable)
+
+
 
 def cansat_video():
     x=0
     while True:
         x+=1
         print(f"taking video {x}")
-        ocamera.video(f'test{x}',duration=10)
+        #ocamera.video(f'test{x}',duration=10)
         print("video taken")
 
 thread1 = threading.Thread(target=cansat_transmit)
-thread2 = threading.Thread(target=cansat_video)
+#thread2 = threading.Thread(target=cansat_video)
 
+print('running')
 thread1.start()
-thread2.start()
+print('thread1 begin')
+#thread2.start()
+print('thread2 begin')
