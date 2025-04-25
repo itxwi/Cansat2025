@@ -158,6 +158,7 @@ class Post_Process:
         for timestamp in data:
             try:
                 extracted_1 = data[timestamp].split(',')[2].split('~')
+                print(data[timestamp].split(','))
                 parsed_packet = {
                     'gyro':{
                         'x':float(extracted_1[0][2::]),
@@ -185,4 +186,4 @@ class Post_Process:
 # pp = Post_Process()
 # final = pp.parse_radio('log_1745532233.3471963')
 # offset = sorted(list(final.keys()))[0]
-# new_times = [timestamp - offset for timestamp in final.keys()]
+#new_times = [timestamp - offset for timestamp in final.keys()]

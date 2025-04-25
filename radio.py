@@ -62,9 +62,9 @@ class Radio:
         """
         run this function when you are station
         """
-
+        import screen
+        station_screen = screen.OLED()
         data_manager = helper.DataManager()
-
         print("Receving")
         lastrecieved = time.time()
         while True:
@@ -83,9 +83,10 @@ class Radio:
                     
                     data_manager.append_data(time.time(),received_message)
                     try:
-
+                        station_screen.clear_image()
                         rssi = received_message.split(',')[4]
-                        print(rssi)
+                        station_screen.draw_font(rssi,[25,25])
+                        station_screen.display()
                     except:
                         pass
 
