@@ -1,5 +1,7 @@
 import json
 import os, sys
+import matplotlib.pyplot as plt
+import numpy as np
 import time
 
 class Enums:
@@ -137,3 +139,50 @@ class DataManager:
         data = {}
         with open(self.filename, 'w') as file:
             json.dump(data, file, indent=4)
+
+class Post_Process:
+    def __init__(self):
+        #import pygame
+        pass
+
+    def parse_radio(self,log):
+        counter =0
+        """
+        Note that the order of json files is perserved
+        """
+        analyzed_file = os.path.abspath(os.path.join(os.path.dirname(__file__),f'logs/{log}.json'))#os.path.abspath(os.path.join(os.path.dirname(__file__), f'../logs/{log}'))
+        with open(analyzed_file,'r') as file:
+            data = json.load(file)
+
+        final_parse = {}
+        for timestamp in data:
+            try:
+                extracted_1 = data[timestamp].split(',')[2].split('~')
+                parsed_packet = {
+                    'gyro':{
+                        'x':float(extracted_1[0][2::]),
+                        'y':float(extracted_1[1][2::]),
+                        'z':float(extracted_1[2][2::])
+                    },
+                    'sensor':{
+                        "t": float(extracted_1[3][2::]),
+                        "p": float(extracted_1[4][2::]),
+                        "a": float(extracted_1[5][2::]),
+                        "g": float(extracted_1[6][2::]),
+                        "h": float(extracted_1[7][2::])
+                    }
+                }
+
+                final_parse[timestamp] = parsed_packet
+                #print(extracted_1)
+            except:
+                #ignoring all faulty packets
+                print(data[timestamp])
+                counter +=1
+        print(f'{counter} faulty packets out of {len(data)}')
+        return final_parse
+
+# pp = Post_Process()
+# final = pp.parse_radio('log_1745532233.3471963')
+# offset = sorted(list(final.keys()))[0]
+# new_times = [timestamp - offset for timestamp in final.keys()]

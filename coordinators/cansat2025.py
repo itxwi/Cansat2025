@@ -19,7 +19,7 @@ The cansat should immedietly begin to
 
 print('initalizing')
 ogyro = gyro.Gyro()
-#ocamera = camera.rpiCam((1000,1000))
+ocamera = camera.rpiCam((1000,1000))
 osensor = sensor.Sensor()
 oradio = radio.Radio(debug=True)
 
@@ -28,9 +28,9 @@ data_manger = helper.DataManager()
 
 print("modules received")
 
-#time.sleep(2)
+time.sleep(2)
 print('calibrating')
-#ogyro.calibrate(rounds=1000)
+ogyro.calibrate(rounds=1000)
 print('setting address to 102')
 oradio.set_address(102)
 
@@ -51,7 +51,7 @@ def cansat_transmit():
         if time.time()-last_checked>=UPDATETIME:
             data_gyro=ogyro.get_data()
             data_sensor=osensor.get_data()
-            packet = {}
+        
             last_checked=time.time()
             
             packets = {'gyro':data_gyro,'sensor':data_sensor}
@@ -68,14 +68,14 @@ def cansat_video():
     while True:
         x+=1
         print(f"taking video {x}")
-        #ocamera.video(f'test{x}',duration=10)
+        ocamera.video(f'test{x}',duration=10)
         print("video taken")
 
 thread1 = threading.Thread(target=cansat_transmit)
-#thread2 = threading.Thread(target=cansat_video)
+thread2 = threading.Thread(target=cansat_video)
 
 print('running')
 thread1.start()
 print('thread1 begin')
-#thread2.start()
+thread2.start()
 print('thread2 begin')

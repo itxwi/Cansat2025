@@ -82,8 +82,12 @@ class Radio:
                     # json.dump(data)
                     
                     data_manager.append_data(time.time(),received_message)
-                    rssi = received_message.split(',')[4]
-                    print(rssi)
+                    try:
+
+                        rssi = received_message.split(',')[4]
+                        print(rssi)
+                    except:
+                        pass
 
                     if self.debug:
                         print(received_message)
