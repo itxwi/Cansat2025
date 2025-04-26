@@ -181,7 +181,7 @@ class Post_Process:
         print(f'{counter} faulty packets out of {len(data)}')
         return final_parse
 
-# pp = Post_Process()
-# final = pp.parse_radio('log_1745532233.3471963')
-# offset = sorted(list(final.keys()))[0]
-#new_times = [timestamp - offset for timestamp in final.keys()]
+pp = Post_Process()
+final = pp.parse_radio('log_1745532233.3471963')
+
+print(final)
