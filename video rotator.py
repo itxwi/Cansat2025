@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import math
 import sys
 import os
 
@@ -29,73 +30,58 @@ fourcc = cv.VideoWriter_fourcc(*'mp4v')
 width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
 
-# Cropping video to make it square
-
-if width > height:
-    offset = (width - height) // 2 # offset to crop the video
-    lower = height # lower bound of the crop
-    higher = width # higher bound of the crop
-else:
-    offset = (height - width) // 2
-    higher = height
-    lower = width # higher bound of the crop
-
-start = offset
-stop = higher - offset
-
-square_video = cv.VideoWriter(path+"original_square.mp4",fourcc,fps,(lower,lower)) #square frame of video
-while True:
-    ret,frame = cap.read()
-
-    
-    if not ret:
-        print("End of video")
-        break
-    if higher==width: # if the video is wider than it is tall
-        cropped = frame[0:lower, offset:higher-offset]
-    else:
-        cropped = frame[offset:higher-offset, 0:lower] #cropping each frame
-    cv.waitKey(1)
-
-    square_video.write(cropped) #append cropped frame to video
+# measurements of video to make it square
 
 
+# start = offset
+# stop = higher - offset
+desired = int(min(width,height) * math.sqrt(2)/2) # desired size of the square video, accounting for rotations
+y_offset =(height -  desired )//2
+x_offset = (width -  desired )//2
 
-cap.release() # dont need it anymore
-square_video.release() # finished cropping the video
-square_video = cv.VideoCapture(path+"original_square.mp4")
-print("finished cropping")
+
 
 # rotation tracking of the video
 
 orb = cv.ORB_create(nfeatures=1000) # the guy that finds features for me
 
-ret,previous = square_video.read()
+ret,previous = cap.read()
 
 # stabilized video
 
-output = cv.VideoWriter(path+"output.mp4",fourcc,fps,(min(width,height),min(width,height)))
+output = cv.VideoWriter(path+"output.mp4",fourcc,fps,(desired,desired))
 
 
 prev_gray = cv.cvtColor(previous, cv.COLOR_BGR2GRAY)
 prev_keyp,prev_descr = orb.detectAndCompute(prev_gray, None) # finding features in first frame
 
-total_rotation = 0 # rotation as the video progresses
 
+total_rotation = 0 # rotation in case 
 
+reference = prev_descr #reference in case no more features r found
 while True:
-    ret,cur = square_video.read()
-    if not ret:
+    ret,cur =  cap.read()
+    if not ret or cur is None:
         break
+
 
 
     cur_gray = cv.cvtColor(cur, cv.COLOR_BGR2GRAY)
     cur_keyp,cur_descr = orb.detectAndCompute(cur_gray, None) # finding features in current frame
+    if cur_descr is None:
+        print("failed")
+        continue
+
+
+
 
     matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True) # the guy that matches the features, using brute force stuffs
+
     matches = matcher.match(prev_descr,cur_descr) # matching!
+
     matches = sorted(matches,key=lambda x:x.distance) # sorting the matches by distance
-    if len(matches) > 10: #if there are enough matches to work with, otherwise do nothing
+    if len(matches) < 15: #if there are enough matches to work with, otherwise do nothing
+        matches = matches[0:15]
         previous_points = np.float32([prev_keyp[m.queryIdx].pt for m in matches]) # getting the points from the previous frame
         current_points = np.float32([cur_keyp[m.trainIdx].pt for m in matches]) # getting the points from the current frame
         
@@ -113,14 +99,17 @@ while True:
             # rotating the frame
             h, w = cur.shape[:2]
             center = (w//2, h//2)
-            rotation_mtrx = cv.getRotationMatrix2D(center, angle, 1.0) # getting the rotation matrix for total rotation
+            rotation_mtrx = cv.getRotationMatrix2D(center, -angle, 1.0) # getting the rotation matrix for total rotation
             stabilized = cv.warpAffine(cur, rotation_mtrx, (w, h)) # rotating the frame using the rotation matrix
         else:
             stabilized = cur # if there is no rotation, just use the current frame
                 
     else:
         stabilized = cur # if there are not enough matches, just use the current frame
+        print("Not enough matches")
+    stabilized = stabilized[y_offset:y_offset+desired,x_offset:x_offset+desired] # cropping the frame to the desired size
     output.write(stabilized) # write the stabilized frame to the output video
+cap.release()
 output.release() # finished!
 
 print("finished stabilizing!")
